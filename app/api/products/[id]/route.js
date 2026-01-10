@@ -1,6 +1,7 @@
-import { prisma } from "@prisma/client";
+import { prisma } from "@/lib/db";
 
-export async function GET(req,{params}){
+export async function GET(req, props) {
+    const params = await props.params;
     const productId = parseInt(params.id);
     const product = await prisma.product.findUnique({
         where : {id : productId}
