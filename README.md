@@ -1,36 +1,114 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Title: Dynamic Product Configuration & Pricing Platform
 
-## Getting Started
+A full-stack web application that allows users to dynamically configure products, calculate prices based on selected options, and place orders.
+The system is designed with a strong backend focus, keeping all business logic, pricing, and validation on the server side.
 
-First, run the development server:
+📌 Problem Statement
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Many businesses sell customizable products (such as shoes, laptops, furniture, or apparel) where the final price depends on multiple user-selected options like size, color, or add-ons.
+Handling dynamic pricing, configuration validation, and order creation in a scalable way is a real-world backend challenge.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This project aims to solve that problem with a clean, database-driven, and extensible architecture.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+✨ Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+🔐 Email-based Authentication
 
-## Learn More
+JWT authentication with HttpOnly cookies
 
-To learn more about Next.js, take a look at the following resources:
+No hardcoded users
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Secure user session handling
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+🛍️ Dynamic Product Configuration
 
-## Deploy on Vercel
+Products with base prices
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Multiple option categories (e.g., Size, Color)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Options with individual price modifiers
+
+Fully database-driven (no hardcoded values)
+
+💰 Backend-Driven Pricing Engine
+
+Final price calculated on the backend
+
+Based on base price + selected options
+
+Centralized pricing logic for scalability
+
+📦 Order Management
+
+Users can place orders after configuration
+
+Orders store final price and configuration
+
+Supports future extension (order status, history)
+
+🌐 Full-Stack & Deployed
+
+Next.js App Router for frontend & backend
+
+Prisma ORM with PostgreSQL
+
+Deployed on Vercel
+
+🧱 Tech Stack
+Frontend
+
+Next.js (App Router)
+
+React
+
+Tailwind CSS
+
+Backend
+
+Next.js API Routes
+
+Prisma ORM
+
+JWT Authentication
+
+Database
+
+PostgreSQL (Production)
+
+SQLite (Local development)
+
+Deployment
+
+Vercel
+
+🏗️ System Design Highlights
+
+No hardcoded business logic
+
+Pricing and validation handled entirely in the backend
+
+Secure authentication using HttpOnly cookies
+
+Clean relational database schema
+
+Clear separation between UI, APIs, and business logic
+
+🔄 Application Flow
+
+User logs in using email
+
+Products are fetched dynamically from the database
+
+User selects configuration options
+
+Backend calculates final price
+
+User places an order
+
+Order is stored with configuration and pricing details
+
+🔗 Live Demo & Repository
+
+Live Application: https://thob-studios-project.vercel.app/
+
+GitHub Repository: https://github.com/tani066/thob-studios-project
