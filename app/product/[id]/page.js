@@ -1,52 +1,56 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
+import { useUser } from "@/lib/use-user";
 
 export default function ProductPage({ params }) {
   const { id } = use(params);
+  const user = useUser();
 
   const [product, setProduct] = useState(null);
   const [categories, setCategories] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState({});
   const [finalPrice, setFinalPrice] = useState(null);
-  const [configId, setConfigId] = useState(null);
+  const [placing, setPlacing] = useState(false);
 
   useEffect(() => {
     fetch(`/api/products/${id}`)
       .then((res) => res.json())
-      .then(setProduct);
+      .then(setProduct)
+      .catch(console.error);
 
     fetch(`/api/products/${id}/options`)
       .then((res) => res.json())
-      .then(setCategories);
+      .then(setCategories)
+      .catch(console.error);
   }, [id]);
 
-  async function calculatePrice(options) {
-    const res = await fetch("/api/configurations", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        userId: 3,
-        productId: Number(id),
-        selectedOptions: options,
-      }),
-    });
-
-    const data = await res.json();
-    setFinalPrice(data.finalPrice);
-    setConfigId(data.id);
-  }
+  useEffect(() => {
+    if (!product) return;
+    const run = async () => {
+      const res = await fetch("/api/pricing", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId: Number(id),
+          selectedOptions,
+        }),
+      });
+      if (!res.ok) {
+        console.error("Pricing error");
+        return;
+      }
+      const { finalPrice } = await res.json();
+      setFinalPrice(finalPrice);
+    };
+    run();
+  }, [product, selectedOptions, id]);
 
   function handleSelect(category, option) {
-    const updated = {
-      ...selectedOptions,
+    setSelectedOptions((prev) => ({
+      ...prev,
       [category]: option,
-    };
-
-    setSelectedOptions(updated);
-    if (Object.keys(updated).length > 0) {
-      calculatePrice(updated);
-    }
+    }));
   }
 
   if (!product) return <p className="p-8">Loading...</p>;
@@ -77,25 +81,64 @@ export default function ProductPage({ params }) {
         <h2 className="text-xl font-bold mt-4">Final Price: ₹{finalPrice}</h2>
       )}
 
-      <button
-        disabled={!finalPrice}
-        className="mt-4 bg-black text-white px-4 py-2 rounded disabled:opacity-50"
-        onClick={async () => {
-          await fetch("/api/orders", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              userId: 3,
-              productId: Number(id),
-              totalPrice: finalPrice,
-              configurationId: configId,
-            }),
-          });
+      {!user && (
+        <p className="mt-2 text-sm text-red-600">
+          Please <a className="underline" href="/login">log in</a> to place an order.
+        </p>
+      )}
 
-          alert("Order placed successfully!");
+      <button
+        disabled={!finalPrice || !user || placing}
+        className="mt-4 cursor-pointer bg-black text-white px-4 py-2 rounded disabled:opacity-50"
+        onClick={async () => {
+          setPlacing(true);
+          try {
+            const res = await fetch("/api/configurations", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                userId: user.id,
+                productId: Number(id),
+                selectedOptions,
+              }),
+            });
+
+            if (!res.ok) {
+              const err = await res.json().catch(() => ({}));
+              alert(err.error || "Failed to save configuration");
+              setPlacing(false);
+              return;
+            }
+
+            const config = await res.json();
+
+            const resOrder = await fetch("/api/orders", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                userId: user.id,
+                productId: Number(id),
+                totalPrice: config.finalPrice ?? finalPrice,
+                configurationId: config.id,
+              }),
+            });
+
+            if (!resOrder.ok) {
+              const err = await resOrder.json().catch(() => ({}));
+              alert(err.error || "Failed to place order");
+              setPlacing(false);
+              return;
+            }
+
+            alert("Order placed successfully!");
+          } catch (e) {
+            alert("Unexpected error placing order");
+          } finally {
+            setPlacing(false);
+          }
         }}
       >
-        Place Order
+        {placing ? "Placing..." : "Place Order"}
       </button>
     </main>
   );
