@@ -25,7 +25,7 @@ export default async function Home() {
             key={product.id}
             className="border p-4 rounded bg-white shadow-sm hover:shadow-md transition-shadow"
           >
-            <h2 className="text-lg font-semibold">{product.name}</h2>
+            <h2 className="text-lg font-semibold text-gray-700">{product.name}</h2>
             <p className="text-gray-700">Base Price: ₹{product.basePrice}</p>
 
             <Link
