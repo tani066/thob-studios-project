@@ -12,19 +12,27 @@ export default async function Home() {
 
   return (
     <main className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Products</h1>
+      <section className="mb-8">
+        <h1 className="text-3xl font-bold">Dynamic Product Catalog</h1>
+        <p className="text-gray-600 mt-2">
+          Configure products and see real-time pricing. Select a product to get started.
+        </p>
+      </section>
 
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((product) => (
-          <div key={product.id} className="border p-4 rounded">
+          <div
+            key={product.id}
+            className="border p-4 rounded bg-white shadow-sm hover:shadow-md transition-shadow"
+          >
             <h2 className="text-lg font-semibold">{product.name}</h2>
-            <p>Base Price: ₹{product.basePrice}</p>
+            <p className="text-gray-700">Base Price: ₹{product.basePrice}</p>
 
             <Link
               href={`/product/${product.id}`}
-              className="text-blue-600 underline"
+              className="inline-block mt-3 bg-black text-white px-3 py-2 rounded"
             >
-              Customize
+              Configure
             </Link>
           </div>
         ))}
