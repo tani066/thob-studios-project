@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 async function getProducts() {
-  const res = await fetch("http://localhost:3000/api/products", {
+  const res = await fetch("https://thob-studios-project.vercel.app/api/products", {
     cache: "no-store",
   });
   return res.json();
